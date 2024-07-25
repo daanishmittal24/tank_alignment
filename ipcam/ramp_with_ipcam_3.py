@@ -17,8 +17,8 @@ EDGE_COLOR = (128, 0, 128)
 LINE_THICKNESS = 2
 SMOOTHING_EPSILON_FACTOR = 0.05
 FRAME_HISTORY = 2
-TARGET_FPS = 5
-FRAME_SKIP = 2  # Skip frames to reduce processing load
+TARGET_FPS = 10
+FRAME_SKIP = 3  # Skip frames to reduce processing load
 
 # Deque to store edge positions
 edge_history1 = deque(maxlen=FRAME_HISTORY)
@@ -93,7 +93,7 @@ def load_model(config_file, weights_file):
     cfg = get_cfg()
     cfg.merge_from_file(config_file)
     cfg.MODEL.WEIGHTS = weights_file
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.94  # Set a custom testing threshold
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.9  # Set a custom testing threshold
     print("Model loaded successfully.")
     return DefaultPredictor(cfg)
 
@@ -165,7 +165,6 @@ def create_colored_mask(mask, color):
     colored_mask[mask == 1] = color
     return colored_mask
 
-
 def process_frame(frame, predictor, mask_percentage, edge_history, is_left_camera):
     masked_frame, frame_mask = mask_sides(frame, mask_percentage)
     outputs = predictor(masked_frame)
@@ -216,10 +215,10 @@ def process_frame(frame, predictor, mask_percentage, edge_history, is_left_camer
 
                 distances = [calculate_distance(point, mid_x) for point in [edge_start, edge_end]]
                 min_distance = min(distances)
-                if angle_degrees < 7:
-                    if min_distance < 10:
+                if angle_degrees < 6:
+                    if min_distance < 7:
                         draw_frame = tint_screen(draw_frame, 'green', TRANSPARENCY_ALPHA)
-                    elif min_distance < 20:
+                    elif min_distance < 15:
                         draw_frame = tint_screen(draw_frame, 'orange', TRANSPARENCY_ALPHA)
                     else:
                         draw_frame = tint_screen(draw_frame, 'red', TRANSPARENCY_ALPHA)

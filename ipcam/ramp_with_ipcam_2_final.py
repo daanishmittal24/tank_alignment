@@ -11,7 +11,7 @@ from detectron2.engine import DefaultPredictor
 MASK_PERCENTAGE = 0.2
 TRANSPARENCY_ALPHA = 0.3
 GREEN_COLOR = (0, 255, 0)
-ORANGE_COLOR = (255, 165, 0)
+ORANGE_COLOR = (0, 165, 255)
 RED_COLOR = (0, 0, 255)
 EDGE_COLOR = (128, 0, 128)
 LINE_THICKNESS = 2
@@ -202,15 +202,15 @@ def process_frame(frame, predictor, mask_percentage, edge_history):
 
                 distances = [calculate_distance(point, mid_x) for point in [right_edge_start, right_edge_end]]
                 min_distance = min(distances)
-                if angle_degrees < 5:
-                    if min_distance < 5:
+                if angle_degrees < 10:
+                    if min_distance < 10:
                         draw_frame = tint_screen(draw_frame, 'green', TRANSPARENCY_ALPHA)
-                    elif min_distance < 15:
+                    elif min_distance < 20:
                         draw_frame = tint_screen(draw_frame, 'orange', TRANSPARENCY_ALPHA)
                     else:
                         draw_frame = tint_screen(draw_frame, 'red', TRANSPARENCY_ALPHA)
-                elif angle_degrees < 15:
-                    if min_distance < 15:
+                elif angle_degrees < 20:
+                    if min_distance < 20:
                         draw_frame = tint_screen(draw_frame, 'orange', TRANSPARENCY_ALPHA)
                     else:
                         draw_frame = tint_screen(draw_frame, 'red', TRANSPARENCY_ALPHA)
@@ -220,7 +220,7 @@ def process_frame(frame, predictor, mask_percentage, edge_history):
     if angle_degrees is not None:
         angle_degrees = int(angle_degrees)  # Convert to integer
         angle_text = f"Angle: {angle_degrees} degrees"
-        cv2.putText(draw_frame, angle_text, (10, draw_frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, GREEN_COLOR,
+        cv2.putText(draw_frame, angle_text, (10, draw_frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, GREEN_COLOR,
                     1, cv2.LINE_AA)
 
     return draw_frame
